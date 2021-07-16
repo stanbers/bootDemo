@@ -11,7 +11,6 @@ import java.sql.Date;
 @Entity
 @DynamicUpdate
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class ProductCategory {
 
@@ -27,4 +26,8 @@ public class ProductCategory {
 
     //command + N show get/set
 
+    public ProductCategory(String categoryName, Integer categoryType) {
+        this.categoryName = categoryName;
+        this.categoryType = categoryType;
+    }
 }
