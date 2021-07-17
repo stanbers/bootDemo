@@ -6,14 +6,19 @@ spring:
     url: jdbc:mysql://192.168.1.12/sell?characterEncoding=utf-8&useSSL=false
   jpa:
     show-sql: true
+#    if no need return the field which value is null, then use below configuration
+#    that means the field will not return to F/E, but if F/E need this field, you can give a init value of the field
+  jackson:
+    default-property-inclusion: non_null
 server:
   servlet:
     context-path: /sell
-logging:
+
+#logging:
 #  pattern:
 #    console: "%d - %msg%n"
-  file:
-    path: /var/log/tomcat/
+#  file:
+#    path: /var/log/tomcat/
   #level:
     #root: debug
     #com.stan.springboottrading.LoggerTest: debug

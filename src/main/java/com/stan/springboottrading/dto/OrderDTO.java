@@ -1,11 +1,12 @@
 package com.stan.springboottrading.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.stan.springboottrading.dataobject.OrderDetail;
-import com.stan.springboottrading.enums.OrderStatusEnum;
-import com.stan.springboottrading.enums.PayStatusEnum;
+import com.stan.springboottrading.utils.serializer.Date2LongSerializer;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +20,9 @@ public class OrderDTO {
     private BigDecimal orderAmount;
     private Integer orderStatus;
     private Integer payStatus;
+    @JsonSerialize(using = Date2LongSerializer.class)
     private Date createTime;
+    @JsonSerialize(using = Date2LongSerializer.class)
     private Date updateTime;
 
     private List<OrderDetail> orderDetailList;
