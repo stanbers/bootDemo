@@ -10,6 +10,8 @@ public enum ResultEnum {
     ORDER_DETAIL_NOT_NOT_EXIST(13,"order detail does not exist"),
     ORDER_STATUS_INCORRECT(14,"order status is not correct"),
     ORDER_UPDATE_FAIL(15,"update order status failed"),
+    PAY_STATUS_INCORRECT(16,"pay status is nor correct"),
+    PAY_STATUS_UPDATE_FAIL(17,"update pay status failed"),
     ;
     private Integer code;
     private String message;

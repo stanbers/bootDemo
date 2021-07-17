@@ -153,12 +153,51 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDTO finish(OrderDTO orderDTO) {
-        return null;
+
+        OrderMaster orderMaster = new OrderMaster();
+        //query order status
+        if(!orderDTO.getOrderStatus().equals(OrderStatusEnum.NEW.getCode())){
+            log.error("order status is not correct, orderId={},orderStatus={}",orderDTO.getOrderId(),orderDTO.getOrderStatus());
+            throw new SellException(ResultEnum.ORDER_STATUS_INCORRECT);
+        }
+
+        //update order status
+        orderDTO.setOrderStatus(OrderStatusEnum.FINISHED.getCode());
+        BeanUtils.copyProperties(orderDTO,orderMaster);
+        OrderMaster orderMaster1 = orderMasterResposity.save(orderMaster);
+        if (orderMaster1 == null){
+            log.error("finish order status failed, orderMaster={}",orderMaster1);
+            throw new SellException(ResultEnum.ORDER_UPDATE_FAIL);
+        }
+        return orderDTO;
     }
 
     @Override
     public OrderDTO paid(OrderDTO orderDTO) {
-        return null;
+
+        OrderMaster orderMaster = new OrderMaster();
+        //query order status
+        if(!orderDTO.getOrderStatus().equals(OrderStatusEnum.NEW.getCode())){
+            log.error("order status is not correct, orderId={},orderStatus={}",orderDTO.getOrderId(),orderDTO.getOrderStatus());
+            throw new SellException(ResultEnum.ORDER_STATUS_INCORRECT);
+        }
+
+        //query pay status
+        if(!orderDTO.getPayStatus().equals(PayStatusEnum.WAIT.getCode())){
+            log.error("pay status is not correct, orderId={},payStatus={}",orderDTO.getOrderId(),orderDTO.getPayStatus());
+            throw new SellException(ResultEnum.PAY_STATUS_INCORRECT);
+        }
+
+        //update pay status
+        orderDTO.setPayStatus(PayStatusEnum.SUCCESS.getCode());
+        BeanUtils.copyProperties(orderDTO,orderMaster);
+        OrderMaster orderMaster1 = orderMasterResposity.save(orderMaster);
+        if (orderMaster1 == null){
+            log.error("update order pay status failed, orderMaster={}",orderMaster1);
+            throw new SellException(ResultEnum.PAY_STATUS_UPDATE_FAIL);
+        }
+        return orderDTO;
     }
 }

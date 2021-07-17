@@ -3,6 +3,7 @@ package com.stan.springboottrading.service.impl;
 import com.stan.springboottrading.dataobject.OrderDetail;
 import com.stan.springboottrading.dto.OrderDTO;
 import com.stan.springboottrading.enums.OrderStatusEnum;
+import com.stan.springboottrading.enums.PayStatusEnum;
 import com.stan.springboottrading.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
@@ -75,9 +76,15 @@ class OrderServiceImplTest {
 
     @Test
     void finish() {
+        OrderDTO orderDTO = orderService.findOne(ORDER_ID);
+        OrderDTO orderDTO1 = orderService.finish(orderDTO);
+        Assertions.assertEquals(OrderStatusEnum.FINISHED.getCode(),orderDTO1.getOrderStatus());
     }
 
     @Test
     void paid() {
+        OrderDTO orderDTO = orderService.findOne(ORDER_ID);
+        OrderDTO orderDTO1 = orderService.paid(orderDTO);
+        Assertions.assertEquals(PayStatusEnum.SUCCESS.getCode(),orderDTO1.getPayStatus());
     }
 }
