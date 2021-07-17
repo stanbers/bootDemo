@@ -2,8 +2,10 @@ package com.stan.springboottrading.service.impl;
 
 import com.stan.springboottrading.dataobject.OrderDetail;
 import com.stan.springboottrading.dto.OrderDTO;
+import com.stan.springboottrading.enums.OrderStatusEnum;
 import com.stan.springboottrading.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.assertj.core.api.AssertionInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -66,6 +68,9 @@ class OrderServiceImplTest {
 
     @Test
     void cancel() {
+        OrderDTO orderDTO = orderService.findOne(ORDER_ID);
+        OrderDTO orderDTO1 = orderService.cancel(orderDTO);
+        Assertions.assertEquals(OrderStatusEnum.CANCEL.getCode(),orderDTO1.getOrderStatus());
     }
 
     @Test

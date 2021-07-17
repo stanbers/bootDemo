@@ -17,6 +17,7 @@ import com.stan.springboottrading.service.ProductService;
 import com.stan.springboottrading.utils.KeyUtil;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -117,7 +119,37 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO cancel(OrderDTO orderDTO) {
-        return null;
+        OrderMaster orderMaster = new OrderMaster();
+        //query order status
+        if(!orderDTO.getOrderStatus().equals(OrderStatusEnum.NEW.getCode())){
+            log.error("order status is not correct, orderId={},orderStatus={}",orderDTO.getOrderId(),orderDTO.getOrderStatus());
+            throw new SellException(ResultEnum.ORDER_STATUS_INCORRECT);
+        }
+
+        //update order status
+        orderDTO.setOrderStatus(OrderStatusEnum.CANCEL.getCode());
+        BeanUtils.copyProperties(orderDTO,orderMaster);
+        OrderMaster orderMaster1 = orderMasterResposity.save(orderMaster);
+        if (orderMaster1 == null){
+            log.error("update order status failed, orderMaster={}",orderMaster1);
+            throw new SellException(ResultEnum.ORDER_UPDATE_FAIL);
+        }
+
+        //increase order inventory
+        if(CollectionUtils.isEmpty(orderDTO.getOrderDetailList())){
+            log.error("no order detail in this order, orderDTO={}",orderDTO);
+            throw new SellException(ResultEnum.ORDER_DETAIL_NOT_NOT_EXIST);
+        }
+        List<CartDTO> cartDTOList = orderDTO.getOrderDetailList().stream().map(
+                e -> new CartDTO(e.getProductId(),e.getProductQuantity())
+        ).collect(Collectors.toList());
+        productService.increaseStock(cartDTOList);
+
+        //refund if paid
+        if(orderDTO.getPayStatus().equals(PayStatusEnum.SUCCESS.getCode())){
+            //TODO
+        }
+        return orderDTO;
     }
 
     @Override
